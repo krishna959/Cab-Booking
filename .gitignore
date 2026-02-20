@@ -1,0 +1,61 @@
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+.env/
+env/
+backend/venv/
+
+# Environment variables
+.env
+backend/.env
+
+# ===============================
+# FastAPI / Uvicorn
+# ===============================
+*.log
+*.pid
+
+# ===============================
+# Database
+# ===============================
+*.sqlite3
+*.db
+
+# ===============================
+# Alembic
+# ===============================
+alembic/versions/__pycache__/
+
+# ===============================
+# Build / Distribution
+# ===============================
+build/
+dist/
+*.egg-info/
+
+# ===============================
+# IDE / Editor
+# ===============================
+.vscode/
+.idea/
+
+# ===============================
+# Frontend (if React/Vite exists)
+# ===============================
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+
+# ===============================
+# OS Files
+# ===============================
+.DS_Store
+Thumbs.db
