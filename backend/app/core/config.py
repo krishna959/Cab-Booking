@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Cab Booking API"
     ENV: str = "development"
     # 🔐 JWT
-    SECRET_KEY: str = "dev-secret-key"
+    SECRET_KEY: str 
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
