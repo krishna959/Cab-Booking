@@ -12,8 +12,21 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register"element={<Register/>} />
         <Route path="/map" element={<MapView />} />
-        <Route path="/user-dashboard" element={<UserDashboard/>} />
-        <Route path="/driver-dashboard" element={<DriverDashboard/>} />    
+        <Route path="/user-dashboard"element={
+        <ProtectedRoute allowedRole="user">
+        <UserDashboard />
+      </ProtectedRoute>
+    }
+  />
+
+        <Route
+          path="/driver-dashboard"
+          element={
+            <ProtectedRoute allowedRole="driver">
+              <DriverDashboard />
+            </ProtectedRoute>
+          }
+        />   
       </Routes>
     </Router>
   );
