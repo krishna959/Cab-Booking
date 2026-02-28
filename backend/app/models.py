@@ -27,3 +27,27 @@ class Driver(Base):
     current_lng = Column(Float)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
+class Ride(Base):
+    __tablename__ = "rides"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
+
+    pickup_location = Column(String(255), nullable=False)
+    drop_location = Column(String(255), nullable=False)
+
+    status = Column(String(50), default="pending")  
+    # pending, accepted, completed, cancelled
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # relationships
+    user = relationship("User")
+    driver = relationship("Driver")

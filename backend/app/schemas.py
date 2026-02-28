@@ -18,3 +18,21 @@ class DriverRegister(BaseModel):
     phone: str
     vehicle_number: str
     vehicle_type: str
+
+from datetime import datetime
+
+class RideCreate(BaseModel):
+    pickup_location: str
+    drop_location: str
+
+class RideResponse(BaseModel):
+    id: int
+    user_id: int
+    driver_id: int | None
+    pickup_location: str
+    drop_location: str
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

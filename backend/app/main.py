@@ -4,6 +4,7 @@ from app.database import SessionLocal
 import app.models as models
 from app.schemas import UserRegister, DriverRegister,LoginRequest
 from app.auth import verify_password, create_access_token,hash_password
+from routes.ride import router as ride_router
 
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
@@ -119,3 +120,5 @@ def protected_test(current_user: dict = Depends(get_current_user)):
         "message": "You are authenticated",
         "user_data": current_user
     }
+
+app.include_router(ride_router)
