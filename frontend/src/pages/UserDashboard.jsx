@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import BookRide from "../components/BookRide";
+import UserRideHistory from "../components/UserRideHistory";
 
 function UserDashboard() {
   const navigate = useNavigate();
@@ -23,6 +25,11 @@ function UserDashboard() {
         >
           Logout
         </button>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <BookRide />
+        <UserRideHistory />
       </div>
 
       {/* Cards */}

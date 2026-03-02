@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PendingRides from "../components/PendingRides";
 
 function DriverDashboard() {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ function DriverDashboard() {
         >
           Logout
         </button>
+      </div>
+
+      <div className="grid md:grid-cols-1 gap-6">
+        <PendingRides />
       </div>
 
       {/* Cards */}
