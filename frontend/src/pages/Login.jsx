@@ -24,8 +24,8 @@ function Login() {
     try {
       const response = await loginUser(formData);
       const token = response.data.access_token;
-
       localStorage.setItem("token", token);
+      localStorage.setItem("role", formData.role);
 
       if (formData.role === "driver") {
         navigate("/driver-dashboard");

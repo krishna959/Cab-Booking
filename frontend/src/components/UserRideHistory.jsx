@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserHistory } from "../services/rideService";
+import { getUserHistory } from "../api/rideService";
 
 function UserRideHistory() {
   const [rides, setRides] = useState([]);

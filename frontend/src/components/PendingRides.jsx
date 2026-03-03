@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPendingRides, acceptRide } from "../services/rideService";
+import { getPendingRides, acceptRide } from "../api/rideService";
 
 function PendingRides() {
   const [rides, setRides] = useState([]);

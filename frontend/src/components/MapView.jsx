@@ -1,32 +1,45 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 
-// Fix marker icon issue in Vite
-delete L.Icon.Default.prototype._getIconUrl;
+function ClickHandler({ setPickup, setDrop }) {
+  const [pickup, setPickupLocal] = useState(null);
+  const [drop, setDropLocal] = useState(null);
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
-});
-
-function MapView() {
-  const position = [12.9716, 77.5946]; // Bangalore sample location
+  useMapEvents({
+    click(e) {
+      if (!pickup) {
+        setPickupLocal(e.latlng);
+        setPickup(e.latlng);
+        console.log("Pickup:", e.latlng);
+      } else {
+        setDropLocal(e.latlng);
+        setDrop(e.latlng);
+        console.log("Drop:", e.latlng);
+      }
+    },
+  });
 
   return (
+    <>
+      {pickup && <Marker position={pickup} />}
+      {drop && <Marker position={drop} />}
+    </>
+  );
+}
+
+function MapView({ setPickup, setDrop }) {
+  return (
     <MapContainer
-      center={position}
-      zoom={13}
-      style={{ height: "500px", width: "100%" }}
+      center={[20.5937, 78.9629]}
+      zoom={5}
+      style={{ height: "400px", width: "100%" }}
     >
       <TileLayer
-        attribution='© OpenStreetMap contributors'
+        attribution="© OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={position}>
-        <Popup>Pickup Location</Popup>
-      </Marker>
+      <ClickHandler setPickup={setPickup} setDrop={setDrop} />
     </MapContainer>
   );
 }

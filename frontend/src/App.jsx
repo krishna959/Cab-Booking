@@ -4,20 +4,24 @@ import Register from "./pages/Register";
 import MapView from "./components/MapView";
 import UserDashboard from "./pages/UserDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register"element={<Register/>} />
+        <Route path="/register" element={<Register />} />
         <Route path="/map" element={<MapView />} />
-        <Route path="/user-dashboard"element={
-        <ProtectedRoute allowedRole="user">
-        <UserDashboard />
-      </ProtectedRoute>
-    }
-  />
+
+        <Route
+          path="/user-dashboard"
+          element={
+            <ProtectedRoute allowedRole="user">
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/driver-dashboard"
@@ -26,7 +30,7 @@ function App() {
               <DriverDashboard />
             </ProtectedRoute>
           }
-        />   
+        />
       </Routes>
     </Router>
   );
