@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPendingRides, acceptRide } from "../api/rideService";
+import { getPendingRides, acceptRide,completeRide } from "../api/rideService";
 
 function PendingRides() {
   const [rides, setRides] = useState([]);
@@ -16,6 +16,12 @@ function PendingRides() {
     const response = await getPendingRides();
     setRides(response.data);
   };
+
+  const handleComplete = async (id) => {
+  await completeRide(id);
+  fetchRides(); // refresh list
+};
+
 
   const handleAccept = async (id) => {
     await acceptRide(id);
@@ -37,12 +43,23 @@ function PendingRides() {
               {ride.pickup_location} → {ride.drop_location}
             </span>
 
-            <button
-              onClick={() => handleAccept(ride.id)}
-              className="bg-emerald-600 text-white px-3 py-1 rounded-lg"
-            >
-              Accept
-            </button>
+            {ride.status === "pending" && (
+              <button
+                onClick={() => handleAccept(ride.id)}
+                className="bg-emerald-600 text-white px-3 py-1 rounded-lg"
+              >
+                Accept
+              </button>
+            )}
+
+            {ride.status === "accepted" && (
+              <button
+                onClick={() => handleComplete(ride.id)}
+                className="bg-indigo-600 text-white px-3 py-1 rounded-lg"
+              >
+                Complete
+              </button>
+            )}
           </div>
         ))
       )}
