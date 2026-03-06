@@ -11,11 +11,11 @@ function UserDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 p-8">
+    <div className="min-h-screen bg-[#102C26]">
       
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold text-indigo-900">
+        <h1 className="text-3xl font-bold text-white">
           User Dashboard
         </h1>
 

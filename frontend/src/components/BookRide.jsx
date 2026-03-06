@@ -53,7 +53,7 @@ function BookRide() {
 
   return (
     <div className="bg-white/70 p-6 rounded-2xl shadow-lg">
-      <h2 className="text-xl font-semibold mb-4 text-indigo-700">
+      <h2 className="text-xl font-semibold mb-4 text-white">
         🚕 Book Ride
       </h2>
 
