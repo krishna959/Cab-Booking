@@ -42,10 +42,10 @@ class Ride(Base):
 
     pickup_location = Column(String(255), nullable=False)
     drop_location = Column(String(255), nullable=False)
-    pickup_lat = Column(Float)
-    pickup_lng = Column(Float)
-    drop_lat = Column(Float)
-    drop_lng = Column(Float)
+    # pickup_lat = Column(Float)
+    # pickup_lng = Column(Float)
+    # drop_lat = Column(Float)
+    # drop_lng = Column(Float)
 
     status = Column(String(50), default="pending")  
     # pending, accepted, completed, cancelled
