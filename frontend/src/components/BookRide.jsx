@@ -3,48 +3,76 @@ import { createRide } from "../api/rideService";
 import MapView from "./MapView";
 
 function BookRide() {
-  const [mode, setMode] = useState("manual");
-
-  const [pickup, setPickup] = useState("");
-  const [drop, setDrop] = useState("");
 
   const [pickupCoords, setPickupCoords] = useState(null);
   const [dropCoords, setDropCoords] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [distance, setDistance] = useState(0);
 
-    let pickupLocation = "";
-    let dropLocation = "";
+  const carTypes = [
+    { type: "BIKE", price: 5 },
+    { type: "SEDAN", price: 10 },
+    { type: "SUV", price: 15 },
+    { type: "PRIME", price: 20 },
+  ];
 
-    if (mode === "manual") {
-      if (!pickup || !drop) {
-        alert("Enter pickup and drop location");
-        return;
-      }
-      pickupLocation = pickup;
-      dropLocation = drop;
-    } else {
-      if (!pickupCoords || !dropCoords) {
-        alert("Select pickup and drop on map");
-        return;
-      }
-      pickupLocation = `${pickupCoords.lat}, ${pickupCoords.lng}`;
-      dropLocation = `${dropCoords.lat}, ${dropCoords.lng}`;
+  // Haversine distance calculation
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return (R * c).toFixed(2);
+  };
+
+  const updateDistance = (pickup, drop) => {
+    if (pickup && drop) {
+      const dist = calculateDistance(
+        pickup.lat,
+        pickup.lng,
+        drop.lat,
+        drop.lng
+      );
+      setDistance(dist);
+    }
+  };
+
+  const handleSubmit = async () => {
+
+    if (!pickupCoords || !dropCoords) {
+      alert("Select pickup and drop location");
+      return;
+    }
+
+    if (!selectedCar) {
+      alert("Select a vehicle type");
+      return;
     }
 
     try {
       await createRide({
-        pickup_location: pickupLocation,
-        drop_location: dropLocation,
+        pickup_location: `${pickupCoords.lat}, ${pickupCoords.lng}`,
+        drop_location: `${dropCoords.lat}, ${dropCoords.lng}`,
+        vehicle_type: selectedCar,
+        distance: distance
       });
 
       alert("Ride booked successfully!");
 
-      setPickup("");
-      setDrop("");
       setPickupCoords(null);
       setDropCoords(null);
+      setSelectedCar(null);
+      setDistance(0);
 
     } catch {
       alert("Error booking ride");
@@ -53,79 +81,67 @@ function BookRide() {
 
   return (
     <div className="bg-white/70 p-6 rounded-2xl shadow-lg">
+
       <h2 className="text-xl font-semibold mb-4 text-indigo-700">
         🚕 Book Ride
       </h2>
 
-      {/* Toggle Buttons */}
-      <div className="flex gap-4 mb-4">
-        <button
-          onClick={() => setMode("manual")}
-          className={`px-4 py-2 rounded-lg ${
-            mode === "manual"
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Manual
-        </button>
+      <MapView
+        setPickup={(coords) => {
+          setPickupCoords(coords);
+          updateDistance(coords, dropCoords);
+        }}
+        setDrop={(coords) => {
+          setDropCoords(coords);
+          updateDistance(pickupCoords, coords);
+        }}
+      />
 
-        <button
-          onClick={() => setMode("map")}
-          className={`px-4 py-2 rounded-lg ${
-            mode === "map"
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Map
-        </button>
-      </div>
-
-      {/* Manual Mode */}
-      {mode === "manual" && (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Pickup Location"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-            className="w-full p-2 rounded-lg border"
-          />
-
-          <input
-            type="text"
-            placeholder="Drop Location"
-            value={drop}
-            onChange={(e) => setDrop(e.target.value)}
-            className="w-full p-2 rounded-lg border"
-          />
-
-          <button
-            type="submit"
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
-          >
-            Book Ride
-          </button>
-        </form>
+      {/* Distance */}
+      {distance > 0 && (
+        <p className="mt-4 text-lg font-medium">
+          Distance: {distance} km
+        </p>
       )}
 
-      {/* Map Mode */}
-      {mode === "map" && (
-        <>
-          <MapView
-            setPickup={setPickupCoords}
-            setDrop={setDropCoords}
-          />
+      {/* Car Selection */}
+      {distance > 0 && (
+        <div className="grid grid-cols-2 gap-4 mt-4">
 
-          <button
-            onClick={handleSubmit}
-            className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg"
-          >
-            Confirm Ride
-          </button>
-        </>
+          {carTypes.map((car) => {
+
+            const fare = (distance * car.price).toFixed(0);
+
+            return (
+              <div
+                key={car.type}
+                onClick={() => setSelectedCar(car.type)}
+                className={`p-4 rounded-xl cursor-pointer border
+                ${
+                  selectedCar === car.type
+                    ? "border-indigo-600 bg-indigo-100"
+                    : "border-gray-300"
+                }`}
+              >
+                <h3 className="font-semibold">{car.type}</h3>
+                <p>₹{fare}</p>
+              </div>
+            );
+          })}
+        </div>
       )}
+
+      {/* Confirm button */}
+
+      {selectedCar && (
+        <button
+          onClick={handleSubmit}
+          className="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+        >
+          Confirm Ride
+        </button>
+      )}
+
     </div>
   );
 }
