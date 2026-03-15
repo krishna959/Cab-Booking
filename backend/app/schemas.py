@@ -34,5 +34,8 @@ class RideResponse(BaseModel):
     status: str
     created_at: datetime
 
+    user: UserRegister | None = None
+    driver: DriverRegister | None = None
+
     class Config:
         from_attributes = True

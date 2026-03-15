@@ -130,3 +130,20 @@ def driver_ride_history(
     ).all()
 
     return rides
+
+# 🟢 Get ride details (user + driver info)
+@router.get("/info/{ride_id}", response_model=schemas.RideResponse)
+def get_ride_details(
+    ride_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+
+    ride = db.query(models.Ride).filter(
+        models.Ride.id == ride_id
+    ).first()
+
+    if not ride:
+        raise HTTPException(status_code=404, detail="Ride not found")
+
+    return ride

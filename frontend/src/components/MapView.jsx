@@ -26,7 +26,7 @@ function MapClickHandler({ pickup, drop, setPickup, setDrop }) {
   return null;
 }
 
-function RouteDrawer({ pickup, drop }) {
+function RouteDrawer({ pickup, drop,setDistance,setFare }) {
   const map = useMap();
   const [route, setRoute] = useState([]);
 
@@ -36,18 +36,25 @@ function RouteDrawer({ pickup, drop }) {
     const fetchRoute = async () => {
       const url = `https://router.project-osrm.org/route/v1/driving/${pickup.lng},${pickup.lat};${drop.lng},${drop.lat}?overview=full&geometries=geojson`;
 
+
       const res = await fetch(url);
       const data = await res.json();
 
-      const coords = data.routes[0].geometry.coordinates.map((c) => [
-        c[1],
-        c[0],
-      ]);
-
+      const coords = data.routes[0].geometry.coordinates.map((c) => 
+        [c[1],
+        c[0],]);
       setRoute(coords);
 
       // Auto zoom to route
       map.fitBounds(coords);
+
+      const distanceKm = (data.routes[0].distance / 1000).toFixed(2);
+
+      setDistance(distanceKm);
+
+      const fare = (50 + distanceKm * 12).toFixed(0);
+
+      setFare(fare);
     };
 
     fetchRoute();
@@ -64,6 +71,9 @@ function MapView({ setPickup, setDrop }) {
 
   const [pickupQuery, setPickupQuery] = useState("");
   const [dropQuery, setDropQuery] = useState("");
+
+  const [distance, setDistance] = useState(null);
+  const [fare, setFare] = useState(null);
 
   const searchLocation = async (query, type) => {
     if (!query) return;
@@ -120,10 +130,24 @@ function MapView({ setPickup, setDrop }) {
         </button>
       </div>
 
+      {/* Distance + Fare */}
+
+      {distance && (
+
+        <div style={{ marginBottom: "10px" }}>
+
+          Distance: {distance} km  
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          Estimated Fare: ₹{fare}
+
+        </div>
+
+      )}
+
       <MapContainer
-        center={[20.5937, 78.9629]}
-        zoom={7}
-        style={{ height: "400px", width: "100%" }}
+        center={[19.054999, 72.8692035]}
+        zoom={15}
+        style={{ height: "300px", width: "100%" }}
       >
         <TileLayer
           attribution="© OpenStreetMap contributors"
@@ -149,7 +173,8 @@ function MapView({ setPickup, setDrop }) {
         />
 
         {/* Route line */}
-        <RouteDrawer pickup={pickup} drop={drop} />
+        <RouteDrawer pickup={pickup} drop={drop} setDistance={setDistance} setFare={setFare}
+ />
       </MapContainer>
     </div>
   );

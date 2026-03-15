@@ -8,28 +8,41 @@ function UserDashboard() {
   const [ride, setRide] = useState(null);
 
   useEffect(() => {
-    const fetchRideDetails = async () => {
-      try {
-        // Step 1: get user rides
-        const history = await getUserHistory();
 
-        if (history.data.length === 0) return;
+  const fetchRideDetails = async () => {
 
-        // Step 2: take latest ride
-        const latestRide = history.data[0];
+    try {
 
-        // Step 3: fetch full ride details
-        const response = await getRideDetails(latestRide.id);
+      const history = await getUserHistory();
 
-        setRide(response.data);
-
-      } catch (err) {
-        console.error("Failed to fetch ride details:", err);
+      if (history.data.length === 0) {
+        setRide(null);
+        return;
       }
-    };
 
-    fetchRideDetails();
-  }, []);
+      // Find active ride first
+      let activeRide =
+        history.data.find((r) => r.status === "accepted") ||
+        history.data.find((r) => r.status === "pending") ||
+        history.data[0];
+
+      const response = await getRideDetails(activeRide.id);
+
+      setRide(response.data);
+
+    } catch (err) {
+      console.error("Failed to fetch ride details:", err);
+    }
+
+  };
+
+  fetchRideDetails();
+  const interval = setInterval(fetchRideDetails, 5000);
+
+  return () => clearInterval(interval);
+
+}, []);
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

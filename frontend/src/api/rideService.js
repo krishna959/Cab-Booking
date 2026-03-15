@@ -23,3 +23,7 @@ export const completeRide = (rideId) => {
 export const getDriverHistory = () => {
   return API.get("/rides/driver/history");
 };
+
+export const getRideDetails = (rideId) => {
+  return API.get(`/rides/info/${rideId}`);
+};
