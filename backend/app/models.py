@@ -55,3 +55,34 @@ class Ride(Base):
     # relationships
     user = relationship("User")
     driver = relationship("Driver")
+
+
+class User_Transaction(Base):  # An user can add their amt manually
+    __tablename__ = "user_transaction"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    Avail_Bal = Column(Float,default = 0)
+
+
+
+
+  
+
+
+class Driver_Transaction(Base): # driver received amt from user via UPI
+    __tablename__ = "Driver_transaction"
+    id = Column(Integer, primary_key=True, index=True)
+    driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    Income = Column(Float,default = 0)
+
+
+
+class Ride_Payment(Base):    # Ride payment done by which user to which driver
+    __tablename__ = "Ride_transaction"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+

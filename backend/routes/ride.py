@@ -7,7 +7,6 @@ from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/rides", tags=["Rides"])
 
-
 # 🟢 User creates ride
 @router.post("/", response_model=schemas.RideResponse)
 def create_ride(
@@ -30,7 +29,6 @@ def create_ride(
 
     return new_ride
 
-
 # 🟢 Driver view pending rides
 @router.get("/pending", response_model=list[schemas.RideResponse])
 def view_pending_rides(
@@ -45,7 +43,6 @@ def view_pending_rides(
     ).all()
 
     return rides
-
 
 # 🟢 Driver accepts ride
 @router.put("/accept/{ride_id}", response_model=schemas.RideResponse)
@@ -77,10 +74,7 @@ def accept_ride(
 
 # 🟢 Driver completes ride
 @router.put("/complete/{ride_id}", response_model=schemas.RideResponse)
-def complete_ride(
-    ride_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def complete_ride(ride_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "driver":
         raise HTTPException(status_code=403, detail="Only drivers can complete rides")
@@ -102,9 +96,7 @@ def complete_ride(
 
 # 🟢 User ride history
 @router.get("/user/history", response_model=list[schemas.RideResponse])
-def user_ride_history(
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def user_ride_history(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "user":
         raise HTTPException(status_code=403, detail="Only users allowed")
@@ -115,12 +107,9 @@ def user_ride_history(
 
     return rides
 
-
 # 🟢 Driver ride history
 @router.get("/driver/history", response_model=list[schemas.RideResponse])
-def driver_ride_history(
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def driver_ride_history(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "driver":
         raise HTTPException(status_code=403, detail="Only drivers allowed")
@@ -133,12 +122,8 @@ def driver_ride_history(
 
 # 🟢 Get ride details (user + driver info)
 @router.get("/info/{ride_id}", response_model=schemas.RideResponse)
-def get_ride_details(
-    ride_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def get_ride_details(ride_id: int,db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
 ):
-
     ride = db.query(models.Ride).filter(
         models.Ride.id == ride_id
     ).first()
