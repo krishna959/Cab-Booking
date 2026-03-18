@@ -7,8 +7,21 @@ from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/pay", tags=["Payment"])
 
-@router.post("/MakePayment")
-def payment(
+@router.post("/Add-balance",response_model = schemas.Balance)
+def balance(
+
     
+):
+    pass
+
+@router.get("/check-balance")
+def check_balance(
+
+):
+    pass
+
+@router.post("/Make-payment")
+def makepayment(
+
 ):
     pass

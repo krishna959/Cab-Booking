@@ -39,3 +39,16 @@ class RideResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class Balance(BaseModel):
+    id: int
+    user_id : int
+    created_at = datetime
+
+    user: UserRegister | None = None
+
+    class Config:
+        from_attributes = True
+class Payment(BaseModel):
+    id: int
+    

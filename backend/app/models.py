@@ -65,11 +65,6 @@ class User_Transaction(Base):  # An user can add their amt manually
     Avail_Bal = Column(Float,default = 0)
 
 
-
-
-  
-
-
 class Driver_Transaction(Base): # driver received amt from user via UPI
     __tablename__ = "Driver_transaction"
     id = Column(Integer, primary_key=True, index=True)

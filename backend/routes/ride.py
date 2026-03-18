@@ -9,10 +9,7 @@ router = APIRouter(prefix="/rides", tags=["Rides"])
 
 # 🟢 User creates ride
 @router.post("/", response_model=schemas.RideResponse)
-def create_ride(
-    ride: schemas.RideCreate,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def create_ride(ride: schemas.RideCreate,db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "user":
         raise HTTPException(status_code=403, detail="Only users can book rides")
@@ -31,9 +28,7 @@ def create_ride(
 
 # 🟢 Driver view pending rides
 @router.get("/pending", response_model=list[schemas.RideResponse])
-def view_pending_rides(
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+def view_pending_rides(db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "driver":
         raise HTTPException(status_code=403, detail="Only drivers allowed")
