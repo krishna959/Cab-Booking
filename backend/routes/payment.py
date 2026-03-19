@@ -7,21 +7,62 @@ from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/pay", tags=["Payment"])
 
-@router.post("/Add-balance",response_model = schemas.Balance)
-def balance(
+@router.post("/Add-balance",response_model = schemas.AddBalanceResponse)
+def Add_balance(request = schemas.AddbalanceRequest, db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)   
+):
+    if current_user["role"] != "user":
+        raise HTTPException(status_code=403, detail="Only users allowed")
 
+    new_transaction = models.User_Transaction(
+        user_id = current_user["user_id"],
+        amount = request.amount,
+    )
+    db.add(new_transaction)
+    db.commit()
+    db.refresh(new_transaction)
+    return new_transaction
+
+@router.post("/Make-payment",response_model = schemas.PaymentResponse)
+def makepayment(request = schemas.PaymentRequest,db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
+): 
+    if current_user["role"] != "user":
+        raise HTTPException(status_code=403, detail="Only users allowed")
     
+    user_balance = db.query(models.UserTransaction).filter(
+        models.UserTransaction.user_id == current_user["user_id"]
+    ).all()
+
+    total_balance = sum(t.amount for t in user_balance)
+    if total_balance < request.amount:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
+
+    payment = models.RidePayment(
+        user_id = current_user["user_id"],
+        driver_id = request.driver_id,
+        amount = request.amount,
+        status = "paid",
+    )
+    db.add(payment)
+    driver_income = models.DriverTransaction(
+        driver_id = request.driver_id,
+        income = request.amount
+    )
+    db.add(driver_income)
+
+    db.commit()
+    db.refresh(payment)
+    return payment
+
+@router.get("/driver-income/",response_model = list[schemas.DriverIncomeResponse])
+def get_driver_income(db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
 ):
-    pass
+    if current_user["role"] != "driver":
+        raise HTTPException(status_code=403, detail="Only drivers allowed")
+    
+    income = db.query(models.DriverTransaction).filter(
+        models.DriverTransaction.driver_id == current_user["user_id"]
+    ).all()
 
-@router.get("/check-balance")
-def check_balance(
+    return income
+    
 
-):
-    pass
-
-@router.post("/Make-payment")
-def makepayment(
-
-):
-    pass

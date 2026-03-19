@@ -40,15 +40,36 @@ class RideResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class Balance(BaseModel):
-    id: int
-    user_id : int
-    created_at = datetime
 
+class AddbalanceRequest(BaseModel):
+    amount:float
+
+class AddBalanceResponse(BaseModel):
+    id: int
+    user_id: int
+    amount: float
+    created_at: datetime
     user: UserRegister | None = None
 
     class Config:
         from_attributes = True
-class Payment(BaseModel):
+
+class PaymentRequest(BaseModel):
+    amount: float
+    driver_id: int
+
+class PaymentResponse(BaseModel):
     id: int
-    
+    user_id: int
+    driver_id: int
+    amount:float
+    status: str
+    user: UserRegister | None = None
+    driver: DriverRegister | None = None
+
+class DriverIncomeResponse(BaseModel):
+    id:int
+    driver_id: int 
+    income: float
+    class Config:
+        from_attributes = True

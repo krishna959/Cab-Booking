@@ -12,6 +12,7 @@ class User(Base):
     role = Column(String(20), default="user")
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    # balance = Column(Float, default=0)
 
 class Driver(Base):
     __tablename__ = "drivers"
@@ -36,20 +37,12 @@ class Ride(Base):
     __tablename__ = "rides"
 
     id = Column(Integer, primary_key=True, index=True)
-
     user_id = Column(Integer, ForeignKey("users.id"))
     driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
-
     pickup_location = Column(String(255), nullable=False)
     drop_location = Column(String(255), nullable=False)
-    # pickup_lat = Column(Float)
-    # pickup_lng = Column(Float)
-    # drop_lat = Column(Float)
-    # drop_lng = Column(Float)
-
     status = Column(String(50), default="pending")  
     # pending, accepted, completed, cancelled
-
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # relationships
@@ -57,27 +50,35 @@ class Ride(Base):
     driver = relationship("Driver")
 
 
-class User_Transaction(Base):  # An user can add their amt manually
-    __tablename__ = "user_transaction"
+class UserTransaction(Base):  # An user can add their amt manually
+    __tablename__ = "user_transactions"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-    Avail_Bal = Column(Float,default = 0)
+    amount = Column(Float, nullable=False)
+    user = relationship("User")
 
+    
 
-class Driver_Transaction(Base): # driver received amt from user via UPI
-    __tablename__ = "Driver_transaction"
+class DriverTransaction(Base): # driver received amt from user via UPI
+    __tablename__ = "Driver_transactions"
     id = Column(Integer, primary_key=True, index=True)
     driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    Income = Column(Float,default = 0)
+    income = Column(Float,default = 0)
+    driver = relationship("Driver")
 
 
 
-class Ride_Payment(Base):    # Ride payment done by which user to which driver
-    __tablename__ = "Ride_transaction"
+
+class RidePayment(Base):    # Ride payment done by which user to which driver
+    __tablename__ = "Ride_transactions"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True)
+    status = Column(String(50), default="pending")  
     created_at = Column(DateTime, default=datetime.utcnow)
+    amount = Column(Float,default =0)
+    user = relationship("User")
+    driver = relationship("Driver")
 
