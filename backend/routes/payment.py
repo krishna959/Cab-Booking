@@ -5,10 +5,10 @@ import app.models as models
 import app.schemas as schemas
 from app.dependencies import get_current_user
 
-router = APIRouter(prefix="/pay", tags=["Payment"])
+router = APIRouter(prefix="/pays", tags=["Pays"])
 
-@router.post("/Add-balance",response_model = schemas.AddBalanceResponse)
-def Add_balance(request = schemas.AddbalanceRequest, db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)   
+@router.post("/add-balance",response_model = schemas.AddBalanceResponse)
+def add_balance(request = schemas.AddbalanceRequest, db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)   
 ):
     if current_user["role"] != "user":
         raise HTTPException(status_code=403, detail="Only users allowed")
@@ -22,7 +22,7 @@ def Add_balance(request = schemas.AddbalanceRequest, db: Session = Depends(get_d
     db.refresh(new_transaction)
     return new_transaction
 
-@router.post("/Make-payment",response_model = schemas.PaymentResponse)
+@router.post("/make-payment",response_model = schemas.PaymentResponse)
 def makepayment(request = schemas.PaymentRequest,db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)
 ): 
     if current_user["role"] != "user":
@@ -35,6 +35,13 @@ def makepayment(request = schemas.PaymentRequest,db: Session = Depends(get_db),c
     total_balance = sum(t.amount for t in user_balance)
     if total_balance < request.amount:
         raise HTTPException(status_code=400, detail="Insufficient balance")
+    
+
+    decduction = models.UserTransaction(
+        user_id = current_user["user_id"],
+        amount = -request.amount,
+    )
+    db.add(decduction)
 
     payment = models.RidePayment(
         user_id = current_user["user_id"],
