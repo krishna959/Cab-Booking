@@ -1,15 +1,27 @@
-import { useNavigate } from "react-router-dom";
-import QrReader from "react-qr-reader";
+import { useEffect, useState } from "react";
+import { makepayment } from "../api/payment";
+import { completeRide } from "../api/rideService";
 
-function UPIpage() {
-  const navigate = useNavigate();
+function UPIPage(){
+  const [paymentdone, setPaymentDone] = useState([])
 
-  const handleScan = (data) => {
-    if (data) {
-      navigate("/"); // redirect to homepage
+  const fetchRides = async() => {
+    try {
+      const complete = await completeRide();
+
+      setPaymentDone(complete.data);
+    } catch (err) {
+      console.error("Failed to fetch payment:",err)
     }
   };
 
-  return <QrReader onScan={handleScan} onError={(err) => console.error(err)} />;
+  useEffect(() => {
+    (async() => {
+      await fetchRides();
+    })();
+  },[]);
+  const handlepayment = async(id) => {
+    await makepayment(id);
+    fetchRides();
+  };
 }
-export default UPIpage;
